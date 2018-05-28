@@ -1,32 +1,22 @@
 package com.common.tool.solr.util;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.common.tool.solr.bean.FieldBean;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.solr.common.cloud.SolrZkClient;
 import org.apache.solr.common.cloud.ZkConfigManager;
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
 
-import com.chinamobile.cmss.bcse.index.bean.FieldProperty;
-import com.chinamobile.cmss.bcse.index.bean.SchemaProperty;
-import com.chinamobile.cmss.bcse.index.tool.CopyDic;
-import com.chinamobile.cmss.bcse.tool.config.Config;
-import com.chinamobile.cmss.bcse.tool.tools.LogUtil;
-import com.common.tool.solr.bean.FieldBean;
-
-import lombok.extern.java.Log;
-import lombok.extern.slf4j.Slf4j;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.List;
 
 /**
  * 创建solrcore需要的配置文件
@@ -37,15 +27,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CreateConfigFileUtil {
 
-	public static boolean process(List<FieldBean> fieldBeans, String confPath, String localConfPath, String coreName) throws Exception {
+	public static boolean process(List<FieldBean> fieldBeans, String confPath, String localConfPath, String coreName,String zkHost) throws DocumentException, IOException {
 
 		mkDir(confPath);
 		copyFiles(localConfPath, confPath);
 		reWriteSchema(fieldBeans, confPath);
 		log.info("the confPath is {}",confPath);
-		ZkConfigManager confManager = new ZkConfigManager(new SolrZkClient(Config.ZK_HOST, 10000, 10000));
+		ZkConfigManager confManager = new ZkConfigManager(new SolrZkClient(zkHost, 10000, 10000));
 		confManager.uploadConfigDir(Paths.get(confPath), coreName);
-	
+
+		return true;
 	}
 
 	public static void mkDir(String path) {
@@ -82,11 +73,11 @@ public class CreateConfigFileUtil {
 		}
 	}
 
-	private static void reWriteSchema(List<FieldBean> fieldBeans, String confPath) throws Exception {
+	private static void reWriteSchema(List<FieldBean> fieldBeans, String confPath) throws DocumentException, IOException {
 
 		SAXReader reader = new SAXReader();
-		System.out.println(new File(confPath + "schema.xml").getAbsolutePath());
-		Document doc = reader.read(new File(confPath + "schema.xml"));
+		System.out.println(new File(confPath + "managed-schema").getAbsolutePath());
+		Document doc = reader.read(new File(confPath + "managed-schema"));
 
 		Element root = doc.getRootElement();
 		@SuppressWarnings("unchecked")
@@ -163,7 +154,7 @@ public class CreateConfigFileUtil {
 		OutputFormat outputFormat = OutputFormat.createPrettyPrint();
 		outputFormat.setEncoding("UTF-8");
 
-		XMLWriter writer = new XMLWriter(new FileWriter(confPath + "schema.xml"), outputFormat);
+		XMLWriter writer = new XMLWriter(new FileWriter(confPath + "managed-schema"), outputFormat);
 		writer.write(doc);
 		writer.close();
 		log.info("write schema is ok !!!");

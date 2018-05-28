@@ -24,14 +24,18 @@
 		<java.version>1.8</java.version>
 		<dom4j.version>1.6.1</dom4j.version>
 		<zookeeper.version>3.4.6</zookeeper.version>
-		<solr-solrj.version>7.3.1</solr-solrj.version>
-		<solr-core.version>7.3.1</solr-core.version>
+		<solr-solrj.version>6.6.3</solr-solrj.version>
+		<solr-core.version>6.6.3</solr-core.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
 		<dependency>
@@ -64,7 +68,13 @@
 			<artifactId>solr-core</artifactId>
 			<version>${solr-core.version}</version>
 		</dependency>
-		
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.47</version>
+		</dependency>
+
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
