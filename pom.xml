@@ -25,7 +25,7 @@
 		<dom4j.version>1.6.1</dom4j.version>
 		<zookeeper.version>3.4.6</zookeeper.version>
 		<solr-solrj.version>6.6.3</solr-solrj.version>
-		<solr-core.version>6.6.3</solr-core.version>
+		<solr-core.version>8.8.2</solr-core.version>
 	</properties>
 
 	<dependencies>
